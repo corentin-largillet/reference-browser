@@ -5,6 +5,8 @@
 package org.mozilla.reference.browser
 
 import android.content.Context
+import mozilla.components.browser.storage.sync.RemoteTabsStorage
+import mozilla.components.feature.remotetabs.RemoteTabsFeature
 import org.mozilla.reference.browser.components.Core
 import org.mozilla.reference.browser.components.Analytics
 import org.mozilla.reference.browser.components.BackgroundServices
@@ -30,8 +32,17 @@ class Components(private val context: Context) {
         )
     }
 
+    // TODO: So I really don't know which "Component" this feature belonged in, so I said screw it and put it there
+    // which is clearly wrong. Anyway, maybe it should be even constructed somewhere else? Needs investigation but ok for now.
+    private val remoteTabsStorage = RemoteTabsStorage()
+    val remoteTabs by lazy {
+        val feat = RemoteTabsFeature(backgroundServices.accountManager, core.store, remoteTabsStorage)
+        feat.start()
+        feat
+    }
+
     // Background services are initiated eagerly; they kick off periodic tasks and setup an accounts system.
-    val backgroundServices by lazy { BackgroundServices(context, core.historyStorage) }
+    val backgroundServices by lazy { BackgroundServices(context, core.historyStorage, remoteTabsStorage) }
 
     val analytics by lazy { Analytics(context) }
     val utils by lazy {

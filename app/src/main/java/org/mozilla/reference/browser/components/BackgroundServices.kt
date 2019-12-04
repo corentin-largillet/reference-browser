@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
+import mozilla.components.browser.storage.sync.RemoteTabsStorage
 import mozilla.components.concept.sync.DeviceCapability
 import mozilla.components.concept.sync.DeviceType
 import mozilla.components.feature.accounts.push.FxaPushSupportFeature
@@ -32,7 +33,8 @@ import org.mozilla.reference.browser.NotificationManager
  */
 class BackgroundServices(
     context: Context,
-    placesHistoryStorage: PlacesHistoryStorage
+    placesHistoryStorage: PlacesHistoryStorage,
+    remoteTabsStorage: RemoteTabsStorage
 ) {
     companion object {
         const val CLIENT_ID = "3c49430b43dfba77"
@@ -40,8 +42,9 @@ class BackgroundServices(
     }
 
     init {
-        // Make the "history" store accessible to workers spawned by the sync manager.
+        // Make the sync stores accessible to workers spawned by the sync manager.
         GlobalSyncableStoreProvider.configureStore(SyncEngine.History to placesHistoryStorage)
+        GlobalSyncableStoreProvider.configureStore(SyncEngine.Tabs to remoteTabsStorage)
     }
 
     private val serverConfig = ServerConfig.release(CLIENT_ID, REDIRECT_URL)
@@ -51,7 +54,7 @@ class BackgroundServices(
         capabilities = setOf(DeviceCapability.SEND_TAB)
     )
     private val syncConfig = SyncConfig(
-        supportedEngines = setOf(SyncEngine.History),
+        supportedEngines = setOf(SyncEngine.History, SyncEngine.Tabs),
         syncPeriodInMinutes = 240L
     ) // four hours
 

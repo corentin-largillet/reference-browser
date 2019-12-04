@@ -29,6 +29,7 @@ import org.mozilla.reference.browser.R
 import org.mozilla.reference.browser.addons.AddonsActivity
 import org.mozilla.reference.browser.ext.components
 import org.mozilla.reference.browser.ext.share
+import org.mozilla.reference.browser.tabs.RemoteTabsActivity
 import org.mozilla.reference.browser.settings.SettingsActivity
 
 class ToolbarIntegration(
@@ -107,6 +108,10 @@ class ToolbarIntegration(
                 context.startActivity(intent)
             },
 
+            SimpleBrowserMenuItem("Remote Tabs") {
+                openRemoteTabsActivity(context)
+            },
+
             SimpleBrowserMenuItem("Report issue") {
                 tabsUseCases.addTab.invoke(
                     "https://github.com/mozilla-mobile/reference-browser/issues/new")
@@ -157,6 +162,11 @@ class ToolbarIntegration(
 
     override fun onBackPressed(): Boolean {
         return toolbarFeature.onBackPressed()
+    }
+
+    private fun openRemoteTabsActivity(context: Context) {
+        val intent = Intent(context, RemoteTabsActivity::class.java)
+        context.startActivity(intent)
     }
 
     private fun openSettingsActivity(context: Context) {

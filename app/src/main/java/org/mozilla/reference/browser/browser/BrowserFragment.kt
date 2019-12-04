@@ -9,6 +9,7 @@ import android.view.View
 import kotlinx.android.synthetic.main.fragment_browser.*
 import kotlinx.android.synthetic.main.fragment_browser.view.*
 import mozilla.components.feature.awesomebar.AwesomeBarFeature
+import mozilla.components.feature.remotetabs.RemoteTabsStorageSuggestionProvider
 import mozilla.components.feature.session.ThumbnailsFeature
 import mozilla.components.feature.tabs.toolbar.TabsToolbarFeature
 import mozilla.components.feature.toolbar.WebExtensionToolbarFeature
@@ -43,6 +44,16 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 requireComponents.core.historyStorage,
                 requireComponents.useCases.sessionUseCases.loadUrl)
             .addClipboardProvider(requireContext(), requireComponents.useCases.sessionUseCases.loadUrl)
+
+        // We cannot really add a `addRemoteTabsProvider` to `AwesomeBarFeature` coz that would create
+        // a dependency on feature-remotetabs (which depends on Sync).
+        awesomeBar.addProviders(
+            RemoteTabsStorageSuggestionProvider(
+                requireComponents.remoteTabs,
+                requireComponents.useCases.tabsUseCases.addTab,
+                requireComponents.core.icons
+            )
+        )
 
         TabsToolbarFeature(
             toolbar = toolbar,
