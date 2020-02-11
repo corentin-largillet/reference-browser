@@ -85,6 +85,11 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
 
+        <activity
+            android:name=".addons.WebExtensionActionPopupActivity"
+            android:label="@string/mozac_feature_addons_addons"
+            android:theme="@style/Theme.AppCompat.Light"/>
+
         <activity android:name=".IntentReceiverActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -153,7 +158,7 @@
 
         <meta-data
             android:name="firebase_messaging_auto_init_enabled"
-            android:value="false" />
+            android:value="true" />
         <meta-data
             android:name="firebase_analytics_collection_enabled"
             android:value="false" />
